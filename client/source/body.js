@@ -13,7 +13,7 @@ const line = d3.line()
 	// assign the X function to plot our line as we wish
 	.x(function(d,i){
 		// return the X coordinate where we want to plot this datapoint
-		return x((i+1)/60);
+		return x(i);
 	})
 	.y(function (d) {
 		// return the Y coordinate where we want to plot this datapoint
