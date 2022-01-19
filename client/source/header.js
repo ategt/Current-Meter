@@ -47,14 +47,15 @@ const update_temperature_data = function (line_item) {
 	graph.selectAll("path").attr("d", line(data));
 };
 
-socket.on('sensor reading broadcast', function(msg) {
+socket.on('board response broadcast', function(msg) {
 	const el = document.getElementById("reading-banner");
 	const headingElement = document.createElement("h2");
 
-	headingElement.innerText = format_response(msg.data);
+	//headingElement.innerText = format_response(msg.data);
+	headingElement.innerText = msg.data;
 	el.replaceChildren(headingElement);
 
-	if (window.chartThings) {
-		update_temperature_data(msg.data);
-	}
+	// if (window.chartThings) {
+	// 	update_temperature_data(msg.data);
+	// }
 });

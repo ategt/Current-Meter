@@ -10,7 +10,7 @@ socketio = SocketIO(app)
 
 @app.route('/')
 def index():
-    return send_from_directory(os.path.join("..","client","distribution"),"index.html", as_attachment=False)
+    return send_from_directory(os.path.join("..","client","distribution"),"base.html", as_attachment=False)
 
 @app.route('/<path:filename>')
 def socket_file(filename):
