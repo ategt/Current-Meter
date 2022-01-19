@@ -1,0 +1,27 @@
+textarea {
+    height: 10em;
+	width: 18em;
+}
+.input-wrapper {
+    display: grid;
+	margin: 9px;
+	grid-gap: 8px;
+}
+.input-fields {
+	display: flex;
+	flex-flow: wrap;
+}
+.recieved-field {
+    height: 14em;
+    width: 36em;
+    /*border: 1px solid black;*/
+    padding: 5px;
+    overflow-y: overlay;
+}
+.reading-banner {
+	padding-right: 10em;
+	padding-left: 10em;
+}
+body {
+	text-align: center;
+}
