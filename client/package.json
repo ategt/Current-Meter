@@ -4,8 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack --mode development --config build/webpack.config.dev.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "d3": "^6.7.0",
+    "socket.io-client": "^4.1.2"
+  },
+  "devDependencies": {
+    "babel-loader": "^8.2.2",
+    "file-loader": "^6.2.0",
+    "html-loader": "^2.1.2",
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.37.1",
+    "webpack-cli": "^4.7.0"
+  }  
 }
