@@ -4,10 +4,10 @@ import { calculatePeaks, calculateTrouffs } from './header';
 const ampPartsPerAnalogUnit = 20 / 509;
 const correctiveFactor = 12.5 / 13.732809430255402;
 
-export const calculateAmps = function () {
+export const calculateAmps = function (data, options) {
 	const amps = new Array();
 
-	const mergedWavePoints = [...calculateTrouffs(), ...calculatePeaks()];
+	const mergedWavePoints = [...calculateTrouffs(data, options), ...calculatePeaks(data, options)];
 	mergedWavePoints.sort((a,b) => a.idx - b.idx);
 
 	for ( let i = 0; i < mergedWavePoints.length - 1; i++ ) {
@@ -20,13 +20,13 @@ export const calculateAmps = function () {
 	return amps;
 };
 
-export const useAmpereData = function () {
+export const useAmpereData = function (options) {
 	const data = window.chartThings.data;
 	const width = window.chartThings.width;
 	const height = window.chartThings.height;
 	const margin = window.chartThings.margin;
 
-	const ampData = calculateAmps();
+	const ampData = calculateAmps(data, options);
 
 	// update axis domains
 	window.chartThings.x.domain([0, ampData.length]).range([margin.left, width - margin.right]);

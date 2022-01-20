@@ -49,32 +49,20 @@ const update_temperature_data = function (line_item) {
 	graph.selectAll("path").attr("d", line(data));
 };
 
-export const calculatePeaks = function () {
-	const peaksIndexes = detectPeaks(window.chartThings.data, d => d,
-								{ 
-								  lookaround: 15,  // the number of neighbors to compare to on each side
-								  sensitivity: 0.5, // sensitivity, in terms of standard deviations above the mean
-								  coalesce: 5     // coalesce together peaks within this distance of each other
-								});
-
+export const calculatePeaks = function (data, options) {
+	const peaksIndexes = detectPeaks(data, d => d, options);
 	const peakSet = new Set(peaksIndexes);
-	const peaks = window.chartThings.data.map((itm, idx) => ({idx:idx, value:itm})).filter((itm, idx) => peakSet.has(idx));
+	const peaks = data.map((itm, idx) => ({idx:idx, value:itm})).filter((itm, idx) => peakSet.has(idx));
 
 	return peaks;
 };
 
 window.calculatePeaks = calculatePeaks;
 
-export const calculateTrouffs = function () {
-	const peaksIndexes = detectPeaks(window.chartThings.data, d => -d,
-								{ 
-								  lookaround: 15,  // the number of neighbors to compare to on each side
-								  sensitivity: 0.5, // sensitivity, in terms of standard deviations above the mean
-								  coalesce: 5     // coalesce together peaks within this distance of each other
-								});
-
+export const calculateTrouffs = function (data, options) {
+	const peaksIndexes = detectPeaks(data, d => -d, options);
 	const peakSet = new Set(peaksIndexes);
-	const peaks = window.chartThings.data.map((itm, idx) => ({idx:idx, value:itm})).filter((itm, idx) => peakSet.has(idx));
+	const peaks = data.map((itm, idx) => ({idx:idx, value:itm})).filter((itm, idx) => peakSet.has(idx));
 
 	return peaks;
 };
