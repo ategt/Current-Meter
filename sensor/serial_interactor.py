@@ -22,6 +22,7 @@ class SensorMonitor(object):
     def __init__(self, port, baudrate):
         super(SensorMonitor, self).__init__()
         self.DATA_REGEX = re.compile(r"Reading\: (?P<reading>[0-9\.\-]+)\t Adjusted: (?P<adjustedReading>[0-9\.\-]+)\t Amps: (?P<amps>[0-9\.\-]+)\t Watts: (?P<watts>[0-9\.\-]+)")
+        self.DATA_TEMP_REGEX = re.compile(r"Reading\: (?P<reading>[0-9\.\-]+)\t Adjusted: (?P<adjustedReading>[0-9\.\-]+)\t Amps: (?P<amps>[0-9\.\-]+)\t Watts: (?P<watts>[0-9\.\-]+)\,(?P<instant_temperature>[0-9]+)\,(?P<denoised_temperature_reading>[0-9]+)")
         self.CONFIG_REGEX = re.compile(r"(?P<frequency>[0-9\.]+)\,(?P<intercept>[0-9\.\-]+)\,(?P<slope>[0-9\.\-]+)\,(?P<voltage>[0-9\.\-]+)\,(?P<windowLength>[0-9\.\-]+)\,(?P<printPeriod>[0-9\.\-]+)")
         self.WAITING_REGEX = re.compile(r"\.\.\.pausing for (?P<delay>[0-9]+) milliseconds")
         self.READING_REGEX = re.compile(r"(?P<millis>[0-9]+)\,(?P<hall_reading>[0-9]+)")
@@ -39,10 +40,17 @@ class SensorMonitor(object):
     def getData(self):
         _ = self._serial.write(b"readdata\n\r")
 
-        electricalData = self._getElectricalData()
-        temperatureData = self._getTemperatureReading()
+        self.line = self._serial.readline()
+        response = self.line.decode("utf-8").strip()
+        
+        return self.DATA_TEMP_REGEX.search(response).groupdict()
 
-        return {**electricalData, **temperatureData}
+        # self.DATA_TEMP_REGEX
+
+        # electricalData = self._getElectricalData()
+        # temperatureData = self._getTemperatureReading()
+
+        # return {**electricalData, **temperatureData}
 
     def _getElectricalData(self):
         self.line = self._serial.readline()
