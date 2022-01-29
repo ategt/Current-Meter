@@ -22,15 +22,22 @@ const format_response = function (line_item) {
 
 const update_temperature_data = function (line_item) {
 	const data_item = line_item;
-	const reading = {millis: parseInt(data_item.millis), reading: parseInt(data_item.reading)};
+	const reading = {watts: parseFloat(data_item.watts), temp_reading: parseInt(data_item.denoised_temperature_reading)};
 	//const temperature = mv_to_f(datum);
+		// adjustedReading: "-0.05"
+		// amps: "-0.00"
+		// denoised_temperature_reading: "447"
+		// instant_temperature: "449"
+		// reading: "1.32"
+		// watts: "-0.34"
 
 	const data = window.chartThings.data;
 	const width = window.chartThings.width;
 	const height = window.chartThings.height;
 	const margin = window.chartThings.margin;
 
-	data.push(reading.reading);
+	//data.push(reading.watts);
+	data.push(mv_to_f(reading.temp_reading));
 
 	//data.splice(0, Math.max(data.length-250, 0));
 
