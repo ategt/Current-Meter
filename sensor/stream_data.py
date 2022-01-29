@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from .serial_interactor import SensorMonitor
+from serial_interactor import SensorMonitor
 from datetime import datetime
 from random import randint
 from time import sleep
@@ -25,15 +25,15 @@ def main():
               data_result = _sensorMonitor.getData()
               handle.write(str(time.time()).encode())
               handle.write(comma)
-              handle.write(f"{data_result['adjustedReading']},{data_result['amps']},{data_result['denoised_temperature_reading']},{data_result['instant_temperature']},{data_result['reading']},{data_result['watts']}")
+              handle.write(_sensorMonitor.getLastLine())
 
               try:
-                  sio.emit("sensor reading event", {"data":data_result})
+                  sio.emit("board response event", {"data":data_result})
               except socketio.exceptions.BadNamespaceError as ex:
                   pass
 
-              print("\r", first_reading.decode("utf-8"), ",", avg_reading.decode("utf-8").strip(), " - ", randint(0, 250), " " * 25, end='')
-              sleep(0.5)
+              print("\r", data_result['denoised_temperature_reading'], ",", data_result['watts'], " - ", randint(0, 250), " " * 25, end='')
+              # sleep(0.5)
   finally:            
     _sensorMonitor.close()
     sio.disconnect()
