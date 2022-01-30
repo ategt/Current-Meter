@@ -36,8 +36,14 @@ const update_temperature_data = function (line_item) {
 	const height = window.chartThings.height;
 	const margin = window.chartThings.margin;
 
-	//data.push(reading.watts);
-	data.push(mv_to_f(reading.temp_reading));
+	if ( location.search.includes("watts") ) {
+	 	data.push(reading.watts);
+	} else if ( location.search.includes("temperature") ) {
+		data.push(mv_to_f(reading.temp_reading));
+	} else {
+		// Default to temperature, I guess
+		data.push(mv_to_f(reading.temp_reading));
+	}
 
 	//data.splice(0, Math.max(data.length-250, 0));
 

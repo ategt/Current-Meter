@@ -60,22 +60,50 @@ graph.append("g")
 		.style("text-anchor", "middle")
 		.text("Time (Seconds)");
 
+const tempAxis = function ( graph, yAxis, height ) {
+	// Add the y-axis to the left
+	graph.append("g")
+		.attr("class", "y axis")
+		.attr("transform", "translate(0, 0)")
+		.call(yAxis)
+		.append("text")
+			.attr("transform", "rotate(-90)")
+			.attr("y", -48)
+			.attr("dy", "0.71em")
+			.attr("x", 0-(height/2))
+			.attr("font-size", "1.4em")
+			.attr("fill", "black")
+			.attr("font-weight", "bold")
+			.style("text-anchor", "middle")
+			.text("Temperature (°F)");
+};
 
-// Add the y-axis to the left
-graph.append("g")
-	.attr("class", "y axis")
-	.attr("transform", "translate(0, 0)")
-	.call(yAxis)
-	.append("text")
-		.attr("transform", "rotate(-90)")
-		.attr("y", -48)
-		.attr("dy", "0.71em")
-		.attr("x", 0-(height/2))
-		.attr("font-size", "1.4em")
-		.attr("fill", "black")
-		.attr("font-weight", "bold")
-		.style("text-anchor", "middle")
-		.text("Temperature (°F)");
+const wattsAxis = function ( graph, yAxis, height ) {
+	// Add the y-axis to the left
+	graph.append("g")
+		.attr("class", "y axis")
+		.attr("transform", "translate(0, 0)")
+		.call(yAxis)
+		.append("text")
+			.attr("transform", "rotate(-90)")
+			.attr("y", -48)
+			.attr("dy", "0.71em")
+			.attr("x", 0-(height/2))
+			.attr("font-size", "1.4em")
+			.attr("fill", "black")
+			.attr("font-weight", "bold")
+			.style("text-anchor", "middle")
+			.text("Power (Watts)");
+};
+
+if ( location.search.includes("watts") ) {
+ 	wattsAxis( graph, yAxis, height );
+} else if ( location.search.includes("temperature") ) {
+	tempAxis( graph, yAxis, height );
+} else {
+	// Default to temperature, I guess
+	tempAxis( graph, yAxis, height );
+}
 
 graph.append("svg:path")
 		.attr("fill", "none")
