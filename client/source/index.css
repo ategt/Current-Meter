@@ -21,6 +21,8 @@ textarea {
 .reading-banner {
 	padding-right: 10em;
 	padding-left: 10em;
+	height: 2em;
+	padding: 0em 0em 0.5em 0em;
 }
 body {
 	text-align: center;

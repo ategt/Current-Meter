@@ -20,7 +20,7 @@ def minimum_run():
 
         date_string = datetime.now().strftime("%F")
 
-        with open(os.path.join(os.getenv("DATA_PATH"), f"washer-{date_string}.txt"), 'ab') as handle:
+        with open(os.path.join(os.getenv("DATA_PATH"), f"fridge-{date_string}.txt"), 'ab') as handle:
             for _ in range(360):
                 data_result = _sensorMonitor.getData()
                 handle.write(str(time.time()).encode())

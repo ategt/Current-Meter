@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import io from 'socket.io-client';
 import { detectPeaks } from './peak-detection';
+import { readingToFarenheit } from './tmp36';
 
 const NUMBER_REGEX = new RegExp("b\\'([\\d]+)");
 const socket = io();
@@ -9,14 +10,29 @@ const mv_to_f = function (mv) {
 	return (mv - 202.4) / 3.7;
 };
 
+const format_power = function (data) {
+	return `Amps: ${data.amps} \tWatts: ${data.watts}`;
+};
+
+const format_temperature = function (data) {
+	const freezerTemp = Math.round(mv_to_f(parseInt(data.denoised_temperature_reading)));
+	const counterTemp = Math.round(readingToFarenheit(parseInt(data.denoised_exterior_temperature_reading)));
+
+	return `Freezer: ${freezerTemp}°F \tCounter: ${counterTemp}°F`;
+};
+
 const format_response = function (line_item) {
 	try {
-		const datum = +NUMBER_REGEX.exec(line_item).pop();
-		const temperature = mv_to_f(datum);
-
-		return `${Math.round(temperature)}°F - ${datum} - ${line_item}`;
+		if ( location.search.includes("watts") ) {
+		 	return format_power(line_item);
+		} else if ( location.search.includes("temperature") ) {
+			return format_temperature(line_item);
+		} else {
+			// Default to temperature, I guess
+			return format_temperature(line_item);
+		}
 	} catch (ex) {
-		return line_item;
+		return JSON.stringify(line_item);
 	}
 };
 
@@ -59,7 +75,7 @@ const update_temperature_data = function (line_item) {
 	graph.selectAll("g.x.axis").call(window.chartThings.xAxis);
 
 	// re-draw data
-	graph.selectAll("path").attr("d", line(data));
+	graph.selectAll("path.line.path.main").attr("d", line(data));
 };
 
 export const calculatePeaks = function (data, options) {
@@ -92,8 +108,8 @@ socket.on('board response broadcast', function(msg) {
 	const el = document.getElementById("reading-banner");
 	const headingElement = document.createElement("h2");
 
-	//headingElement.innerText = format_response(msg.data);
-	headingElement.innerText = JSON.stringify(msg.data);
+	headingElement.innerText = format_response(msg.data);
+	//headingElement.innerText = JSON.stringify(msg.data);
 	el.replaceChildren(headingElement);
 
 	if (window.chartThings) {
