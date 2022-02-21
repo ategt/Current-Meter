@@ -17,8 +17,9 @@ const format_power = function (data) {
 const format_temperature = function (data) {
 	const freezerTemp = Math.round(mv_to_f(parseInt(data.denoised_temperature_reading)));
 	const counterTemp = Math.round(readingToFarenheit(parseInt(data.denoised_exterior_temperature_reading)));
+	const refrigeratorTemp = Math.round(readingToFarenheit(parseInt(data.denoised_frige_temperature_reading)));
 
-	return `Freezer: ${freezerTemp}°F \tCounter: ${counterTemp}°F`;
+	return `Freezer: ${freezerTemp}°F \t Refrigerator: ${refrigeratorTemp}°F \tCounter: ${counterTemp}°F`;
 };
 
 const format_response = function (line_item) {
@@ -26,6 +27,8 @@ const format_response = function (line_item) {
 		if ( location.search.includes("watts") ) {
 		 	return format_power(line_item);
 		} else if ( location.search.includes("temperature") ) {
+			return format_temperature(line_item);
+		} else if ( location.search.includes("refrigerator") ) {
 			return format_temperature(line_item);
 		} else {
 			// Default to temperature, I guess
@@ -38,8 +41,11 @@ const format_response = function (line_item) {
 
 const update_temperature_data = function (line_item) {
 	const data_item = line_item;
-	const reading = {watts: parseFloat(data_item.watts), temp_reading: parseInt(data_item.denoised_temperature_reading)};
-	//const temperature = mv_to_f(datum);
+	const reading = {watts: parseFloat(data_item.watts), 
+					 temp_reading: parseInt(data_item.denoised_temperature_reading), 
+					 frige_temp: readingToFarenheit(parseInt(data_item.denoised_frige_temperature_reading))};
+
+		//const temperature = mv_to_f(datum);
 		// adjustedReading: "-0.05"
 		// amps: "-0.00"
 		// denoised_temperature_reading: "447"
@@ -56,6 +62,8 @@ const update_temperature_data = function (line_item) {
 	 	data.push(reading.watts);
 	} else if ( location.search.includes("temperature") ) {
 		data.push(mv_to_f(reading.temp_reading));
+	} else if ( location.search.includes("refrigerator") ) {
+		data.push( reading.frige_temp );
 	} else {
 		// Default to temperature, I guess
 		data.push(mv_to_f(reading.temp_reading));

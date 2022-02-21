@@ -101,6 +101,8 @@ if ( location.search.includes("watts") ) {
  	wattsAxis( graph, yAxis, height );
 } else if ( location.search.includes("temperature") ) {
 	tempAxis( graph, yAxis, height );
+} else if ( location.search.includes("refrigerator") ) {
+	tempAxis( graph, yAxis, height );
 } else {
 	// Default to temperature, I guess
 	tempAxis( graph, yAxis, height );
