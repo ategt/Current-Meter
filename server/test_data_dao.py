@@ -17,14 +17,14 @@ class TestDataDao(unittest.TestCase):
 
     def test_readFile(self):
         files = self.dataDao.listFiles()
-        
+
         for file in files:
             content = self.dataDao.readFile(file)
             self.assertTrue(len(content) > 1)
 
     def test_getData(self):
         files = self.dataDao.listFiles()
-        
+
         for file in files:
             data = self.dataDao.getData(file)
             self.assertTrue(len(data) > 1)
