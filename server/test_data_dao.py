@@ -26,8 +26,9 @@ class TestDataDao(unittest.TestCase):
         files = self.dataDao.listFiles()
 
         for file in files:
+            print(file)
             data = self.dataDao.getData(file)
-            self.assertTrue(len(data) > 1)
+            self.assertTrue(len(data) > 1, file)
 
 if __name__ == '__main__':
     unittest.main()
