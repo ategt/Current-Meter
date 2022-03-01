@@ -20,6 +20,19 @@ class DataDao(object):
         with open(filePath, 'r') as handle:
             return handle.read()
 
+    def _readFileOffset(self, fileName, offset, limit = None):
+        filePath = os.path.join(self.dataPath, fileName)
+        #fileSize = os.stat(filePath).st_size
+
+        hint = -1 if limit is None else limit
+
+        with open(filePath, 'r') as handle:
+            handle.seek(offset)
+            return handle.readlines(hint)
+            # lines = handle.readlines(hint)         
+            # print(f"{offset}x{limit} H={hint} : {lines}")
+            # return lines
+
     def getData(self, fileName):
         content = self.readFile(fileName)
         return [self._parseLine(line) for line in content.strip().split("\n")]
@@ -30,8 +43,6 @@ class DataDao(object):
         datum = dict((key, value) for key, value in initial_datum.items() if value is not None)
 
         for key, value in datum.items():
-            if value is None:
-                _ = datum.pop(key)
             if self.INTEGER_REGEX.match(value):
                 datum[key] = int(value)
             elif self.FLOAT_REGEX.match(value):
@@ -51,3 +62,26 @@ class DataDao(object):
         lines = content.strip().split("\n")
 
         return [self._parseLine(line) for line in lines if self._getTimecode(line) > start and self._getTimecode(line) < end]
+
+    def determineOffset(self, fileName, timecode):
+        filePath = os.path.join(self.dataPath, fileName)
+
+        with open(filePath, 'r') as handle:
+            handle.seek(0)
+
+            line = -1
+
+            while line != "":
+                line = handle.readline()
+                line_timecode = self._getTimecode(line)
+
+                if line_timecode == timecode:
+                    ending_position = handle.tell() - 1
+                    starting_position = ending_position - len(line)
+                    trimmed_ending_position = starting_position + len(line.strip())
+
+                    return {"start": starting_position, "end": trimmed_ending_position}
+
+    def getOffset(self, fileName, offset, limit):
+        lines = self._readFileOffset(fileName = fileName, offset = offset, limit = limit)
+        return [self._parseLine(line.strip()) for line in lines]
