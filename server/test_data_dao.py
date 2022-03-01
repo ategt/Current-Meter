@@ -1,4 +1,5 @@
 import unittest
+import random
 import os
 
 from .data_dao import DataDao
@@ -26,9 +27,29 @@ class TestDataDao(unittest.TestCase):
         files = self.dataDao.listFiles()
 
         for file in files:
-            print(file)
+            print("Get Data -", file)
             data = self.dataDao.getData(file)
             self.assertTrue(len(data) > 1, file)
+
+    def test_getTimeData(self):
+        files = self.dataDao.listFiles()
+
+        for file in files:
+            print("Get Times -", file)
+            data = self.dataDao.getData(file)
+            all_data = self.dataDao.getTimes(file, -float("inf"), float("inf"))
+
+            self.assertEqual(len(data), len(all_data))
+
+            record_count = len(all_data)
+
+            if record_count > 10:
+                start_index = random.randint(1, record_count - 5)
+                end_index = random.randint(start_index, record_count - 1)
+
+                sub_data = self.dataDao.getTimes(file, data[start_index]['timecode'], data[end_index]['timecode'])
+
+                self.assertTrue(len(sub_data) <= record_count - 2)
 
 if __name__ == '__main__':
     unittest.main()
