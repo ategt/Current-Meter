@@ -80,7 +80,7 @@ class DataDao(object):
                     starting_position = ending_position - len(line)
                     trimmed_ending_position = starting_position + len(line.strip())
 
-                    return {"start": starting_position, "end": trimmed_ending_position}
+                    return {"start": starting_position, "end": trimmed_ending_position, "limit": trimmed_ending_position - starting_position}
 
     def getOffset(self, fileName, offset, limit):
         lines = self._readFileOffset(fileName = fileName, offset = offset, limit = limit)

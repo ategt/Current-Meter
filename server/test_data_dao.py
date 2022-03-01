@@ -71,7 +71,7 @@ class TestDataDao(unittest.TestCase):
             datum = returned_data[0]
 
             self.assertEqual(set(datum.keys()), set(selected_record.keys()))
-            
+
             for key in datum.keys():
                 self.assertEqual(datum[key], selected_record[key])
 
@@ -84,9 +84,71 @@ class TestDataDao(unittest.TestCase):
 
             self.assertEqual(set(datum.keys()), set(paired_datum.keys()))
             self.assertEqual(set(datum.keys()), set(extra_record.keys()), "This check seemed worth doing, but it may fail and the program would still work.")
-            
+
             for key in paired_datum.keys():
                 self.assertEqual(datum[key], paired_datum[key])
+
+    def test_getOffsetByLimit(self):
+        files = self.dataDao.listFiles()
+
+        for file in files:
+            print("Get Offset -", file)
+            
+            data = self.dataDao.getData(file)
+            record_count = len(data)
+            index = random.randint(0, record_count)
+            selected_record = data[index]
+            timecode = selected_record['timecode']
+            offset_meta = self.dataDao.determineOffset(file, timecode)
+
+            returned_data = self.dataDao.getOffset(file, offset = offset_meta['start'], limit = offset_meta['limit'])
+
+            self.assertEqual(len(returned_data), 1, "Using the specified offset should return only one record. {}, limit:{}".format(offset_meta, offset_meta['end'] - offset_meta['start']))
+
+            datum = returned_data[0]
+
+            self.assertEqual(set(datum.keys()), set(selected_record.keys()))
+
+            for key in datum.keys():
+                self.assertEqual(datum[key], selected_record[key])
+
+            returned_data_pair = self.dataDao.getOffset(file, offset = offset_meta['start'], limit = offset_meta['limit'] + 2)
+
+            self.assertEqual(len(returned_data_pair), 2, "Using the specified offset should return two records.")
+
+            paired_datum = returned_data_pair[0]
+            extra_record = returned_data_pair[1]
+
+            self.assertEqual(set(datum.keys()), set(paired_datum.keys()))
+            self.assertEqual(set(datum.keys()), set(extra_record.keys()), "This check seemed worth doing, but it may fail and the program would still work.")
+
+            for key in paired_datum.keys():
+                self.assertEqual(datum[key], paired_datum[key])
+
+    def test_getOffsetRange(self):
+        " Use getOffset to retrieve a list of records. "
+
+        files = self.dataDao.listFiles()
+
+        for file in files:
+            print("Get Offset Range -", file)
+
+            data = self.dataDao.getData(file)
+            record_count = len(data)
+
+            if record_count > 10:
+                start_index = random.randint(1, record_count - 5)
+                end_index = random.randint(start_index, record_count - 1)
+
+                start_timecode = data[start_index]['timecode']
+                ending_timecode = data[end_index]['timecode']
+
+                start_offset_meta = self.dataDao.determineOffset(file, start_timecode)
+                ending_offset_meta = self.dataDao.determineOffset(file, ending_timecode)
+
+                returned_data = self.dataDao.getOffset(file, offset = start_offset_meta['start'], limit = ending_offset_meta['end'] - start_offset_meta['start'])
+
+                self.assertEqual(len(returned_data), end_index - start_index, "Start: {}, End: {}, Indexes: {}:{}, Timecodes: {}:{}, Ending Start Bx: {}".format(start_offset_meta['start'], ending_offset_meta['end'], start_index, end_index, start_timecode, ending_timecode, ending_offset_meta['start']))
 
 if __name__ == '__main__':
     unittest.main()
