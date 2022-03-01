@@ -39,10 +39,15 @@ class DataDao(object):
 
         return datum
 
+    def _getTimecode(self, line):
+        match = self.DATA_LINE_REGEX.match(line).groupdict()
+        return float(match['timecode'])
+
     def getTimes(self, fileName, start, end):
         if start > end:
             raise Exception("Start time must occurr before end time!")
 
-        data = self.getData(fileName)
+        content = self.readFile(fileName)
+        lines = content.strip().split("\n")
 
-        return [datum for datum in data if float(datum['timecode']) > start and float(datum['timecode']) < end]
+        return [self._parseLine(line) for line in lines if self._getTimecode(line) > start and self._getTimecode(line) < end]
