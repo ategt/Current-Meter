@@ -1,3 +1,6 @@
 client/node_modules/
 client/distribution/
 __pycache__/
+server/env/
+ 
+data/
