@@ -11,7 +11,7 @@ import os
 
 def minimum_run():
     try:
-        _sensorMonitor = SensorMonitor("COM4", 9600)
+        sensorMonitor = SensorMonitor("COM4", 9600)
         sio = socketio.Client()
         comma = ",".encode()
 
@@ -22,7 +22,7 @@ def minimum_run():
 
         with open(os.path.join(os.getenv("DATA_PATH"), f"fridge-{date_string}.txt"), 'ab') as handle:
             for _ in range(360):
-                data_result = _sensorMonitor.getData()
+                data_result = sensorMonitor.getData()
                 handle.write(str(time.time()).encode())
                 handle.write(comma)
                 handle.write(_sensorMonitor.getLastLine())
