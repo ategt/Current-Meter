@@ -125,6 +125,32 @@ class TestDataDao(unittest.TestCase):
             for key in paired_datum.keys():
                 self.assertEqual(datum[key], paired_datum[key])
 
+    def test_simpleGetOffsetRange(self):
+        " Something about getOffset with range is not working. This will help to figure out what. "
+        files = self.dataDao.listFiles()
+        file = files[0]
+
+        data = self.dataDao.getData(file)
+
+        starting_record = data[7]
+        starting_timecode = starting_record['timecode']
+        start_offset_info = self.dataDao.determineOffset(file, starting_timecode)
+        
+        returned_data = self.dataDao.getOffset(file, offset = start_offset_info['start'], limit = start_offset_info['end'] - start_offset_info['start'])
+
+        self.assertEqual(len(returned_data), 1, "This should be one record.")
+        self.assertEqual(returned_data[0]['timecode'], starting_timecode)
+
+        continuing_record = data[8]
+        continuing_timecode = continuing_record['timecode']
+        continuing_offset_info = self.dataDao.determineOffset(file, continuing_timecode)
+
+        continuing_records = self.dataDao.getOffset(file, offset = start_offset_info['start'], limit = continuing_offset_info['end'] - start_offset_info['start'])
+
+        self.assertEqual(len(continuing_records), 2, "This should be two records.")
+        self.assertEqual(continuing_records[0]['timecode'], starting_timecode)
+        self.assertEqual(continuing_records[1]['timecode'], continuing_record['timecode'])
+
     def test_getOffsetRange(self):
         " Use getOffset to retrieve a list of records. "
 
